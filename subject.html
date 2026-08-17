@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>المادة — أكاديمية فقه المسلم</title>
+<meta name="theme-color" content="#0B1620" />
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a href="index.html" class="brand">
+      <span class="mark">ف</span>
+      <span class="brand-text"><span class="gold-shimmer">أكاديمية فقه المسلم</span><small>دروسٌ بإسنادٍ موثوق</small></span>
+    </a>
+    <nav class="main-nav">
+      <a href="index.html"><span class="full">الرئيسية</span></a>
+      <div class="nav-item" id="levels-nav-item">
+        <button type="button" onclick="document.getElementById('levels-nav-item').classList.toggle('open')">
+          <span class="full">المستويات</span>
+          <svg viewBox="0 0 12 8" fill="none"><path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="1.5"/></svg>
+        </button>
+        <div class="nav-dropdown" id="levels-dropdown"></div>
+      </div>
+      <a href="index.html#path"><span class="full">عن الأكاديمية</span></a>
+    </nav>
+  </div>
+</header>
+<div class="wrap" style="padding-top:16px;">
+  <nav class="crumbs">
+    <a href="index.html">الرئيسية</a>
+    <span>/</span>
+    <a id="crumb-level" href="#"></a>
+    <span>/</span>
+    <span id="crumb-subject"></span>
+  </nav>
+</div>
+
+<section class="subject-page wrap">
+  <div class="subject-page-head">
+    <span class="subject-icon lg" id="subject-icon"></span>
+    <div>
+      <h1 id="subject-title"></h1>
+      <div class="teacher-line" id="subject-teacher"></div>
+    </div>
+  </div>
+
+  <div class="subject-body">
+    <div class="subject-main">
+      <div class="info-block" id="goal-block">
+        <h3>هدف المادة في هذا المستوى</h3>
+        <p id="subject-goal"></p>
+      </div>
+      <div class="info-block" id="reference-block" style="display:none">
+        <h3>المرجع</h3>
+        <p id="subject-reference"></p>
+      </div>
+      <div class="info-block">
+        <h3>الدروس</h3>
+        <ol class="lessons-grid-thumbs" id="lessons-list"></ol>
+      </div>
+    </div>
+
+    <aside class="up-next" id="subject-side">
+      <div class="label">مادة أخرى في نفس المستوى</div>
+      <div id="other-subjects-list"></div>
+    </aside>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap">أكاديمية فقه المسلم — محتوى مُقدَّم بإذن من مشايخه، لخدمة طالب العلم</div>
+</footer>
+
+<script src="js/effects.js"></script>
+<script src="js/data.js"></script>
+<script src="js/progress.js"></script>
+<script>
+  const params = new URLSearchParams(location.search);
+  const subjectId = params.get("id");
+  const found = getSubject(subjectId);
+
+  const dropdown = document.getElementById("levels-dropdown");
+  SITE_DATA.levels.forEach((lv) => {
+    const item = document.createElement("a");
+    item.href = `level.html?level=${lv.id}`;
+    item.innerHTML = `<span>${lv.name}</span><span class="ord">${lv.arabicOrdinal}</span>`;
+    dropdown.appendChild(item);
+  });
+  document.addEventListener("click", (e) => {
+    const nav = document.getElementById("levels-nav-item");
+    if (!nav.contains(e.target)) nav.classList.remove("open");
+  });
+
+  if (!found) {
+    document.querySelector(".subject-page").innerHTML = "<h1>المادة غير موجودة</h1>";
+  } else {
+    const { subject, level } = found;
+    document.title = `${subject.name} — أكاديمية فقه المسلم`;
+    document.getElementById("crumb-level").textContent = level.name;
+    document.getElementById("crumb-level").href = `level.html?level=${level.id}`;
+    document.getElementById("crumb-subject").textContent = subject.name;
+    document.getElementById("subject-icon").textContent = subject.name.charAt(0);
+    document.getElementById("subject-title").textContent = subject.name;
+    document.getElementById("subject-teacher").textContent = subject.teacherNote
+      ? `${subject.teacher} — ${subject.teacherNote}`
+      : subject.teacher;
+    document.getElementById("subject-goal").textContent = subject.goal;
+
+    if (subject.reference) {
+      document.getElementById("reference-block").style.display = "block";
+      document.getElementById("subject-reference").textContent = subject.reference;
+    }
+
+    const list = document.getElementById("lessons-list");
+    list.className = "lessons-grid-thumbs";
+    (subject.lessons || []).forEach((lesson, idx) => {
+      const li = document.createElement("li");
+      const hasVideo = !!lesson.youtubeId;
+      const cardClass = "lesson-thumb-card" + (hasVideo ? "" : " soon");
+      const inner = `
+        <div class="lesson-thumb-img">
+          ${hasVideo
+            ? `<img src="https://img.youtube.com/vi/${lesson.youtubeId}/hqdefault.jpg" alt="" loading="lazy" />
+               <div class="play"><svg viewBox="0 0 60 60" fill="none"><circle cx="30" cy="30" r="29" stroke="#EDE6D6" stroke-width="1.5"/><path d="M24 20L42 30L24 40V20Z" fill="#EDE6D6"/></svg></div>`
+            : `<div class="soon-thumb">قريبًا</div>`
+          }
+          <span class="lesson-thumb-num">${idx + 1}</span>
+        </div>
+        <div class="lesson-thumb-title">${lesson.title}</div>
+      `;
+      li.innerHTML = hasVideo
+        ? `<a href="lesson.html?id=${lesson.id}" class="${cardClass}">${inner}</a>`
+        : `<div class="${cardClass}">${inner}</div>`;
+      list.appendChild(li);
+    });
+
+    const otherList = document.getElementById("other-subjects-list");
+    level.subjects.forEach((s) => {
+      const row = document.createElement("a");
+      row.href = `subject.html?id=${s.id}`;
+      row.className = "mini-lesson";
+      if (s.id === subject.id) row.style.color = "var(--gold-bright)";
+      row.innerHTML = `<span class="dot"></span><span>${s.name}</span>`;
+      otherList.appendChild(row);
+    });
+  }
+  if (window.rescanReveal) window.rescanReveal();
+</script>
+
+</body>
+</html>

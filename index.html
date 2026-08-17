@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>أكاديمية فقه المسلم — دروس فقهية موثوقة بإسناد علمي</title>
+<meta name="description" content="منصة تعليمية تجمع الدروس الفقهية من الشيوخ الموثوقين، مرتبة في أربعة مستويات تدريجية." />
+<meta property="og:title" content="أكاديمية فقه المسلم — دروس فقهية موثوقة بإسناد علمي" />
+<meta property="og:description" content="دروس مصوّرة لنخبة من المشايخ، مرتّبة في أربعة مستويات متدرّجة." />
+<meta property="og:type" content="website" />
+<meta name="theme-color" content="#0B1620" />
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a href="index.html" class="brand">
+      <span class="mark">ف</span>
+      <span class="brand-text"><span class="gold-shimmer">أكاديمية فقه المسلم</span><small>دروسٌ بإسنادٍ موثوق</small></span>
+    </a>
+    <nav class="main-nav">
+      <a href="index.html"><span class="full">الرئيسية</span></a>
+      <div class="nav-item" id="levels-nav-item">
+        <button type="button" onclick="document.getElementById('levels-nav-item').classList.toggle('open')">
+          <span class="full">المستويات</span>
+          <svg viewBox="0 0 12 8" fill="none"><path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="1.5"/></svg>
+        </button>
+        <div class="nav-dropdown" id="levels-dropdown"></div>
+      </div>
+      <a href="#path"><span class="full">عن الأكاديمية</span></a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <svg class="hero-star" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <g stroke="#C9A227" stroke-width="0.6">
+      <polygon points="100,10 122,78 193,78 135,120 157,190 100,148 43,190 65,120 7,78 78,78" />
+      <circle cx="100" cy="100" r="90" />
+      <circle cx="100" cy="100" r="70" />
+    </g>
+  </svg>
+  <div class="particles" id="particles"></div>
+  <div class="wrap">
+    <div class="hero-eyebrow">أكاديمية فقه المسلم — منهج علمي متكامل</div>
+    <h1>رحلتك في طلب العلم، من <em>التأسيس</em> إلى الإتقان</h1>
+    <p class="lead">
+      دروس مصوّرة لنخبة من المشايخ، مرتّبة في أربعة مستويات متدرّجة — من الأساسيات إلى القضايا المعاصرة،
+      لتبني تصورًا فقهيًا سليمًا خطوة بعد خطوة.
+    </p>
+    <div class="hero-actions">
+      <a href="level.html?level=1" class="btn btn-gold">ابدأ من المستوى الأول</a>
+      <a href="#path" class="btn btn-ghost">تصفّح كل المستويات</a>
+    </div>
+
+    <div class="trust-badges">
+      <span class="badge">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 12L10 18L20 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        محتوى بإذن مباشر من المشايخ
+      </span>
+      <span class="badge">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 3L4 7v5c0 4.5 3.4 8.7 8 10 4.6-1.3 8-5.5 8-10V7l-8-4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+        مجاني بالكامل
+      </span>
+      <span class="badge">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M12 7v5l3.5 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        تعلّم بالسرعة اللي تناسبك
+      </span>
+    </div>
+
+    <div class="stats-bar reveal">
+      <div class="stat">
+        <span class="num" id="stat-subjects">٠</span>
+        <span class="label">مادة شرعية متاحة الآن</span>
+      </div>
+      <div class="stat">
+        <span class="num" id="stat-lessons">٠</span>
+        <span class="label">درسًا مصوّرًا جاهزًا</span>
+      </div>
+      <div class="stat">
+        <span class="num" id="stat-levels">٤</span>
+        <span class="label">مستويات متدرّجة</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="hadith-banner reveal">
+    <p class="quote">«مَنْ سَلَكَ طَرِيقًا يَلْتَمِسُ فِيهِ عِلْمًا سَهَّلَ اللَّهُ لَهُ بِهِ طَرِيقًا إِلَى الْجَنَّةِ»</p>
+    <div class="attribution">رواه مسلم</div>
+  </div>
+</section>
+
+<section class="path-section" id="path">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <h2>المستويات الأربعة</h2>
+      <p>كل مستوى يبني على ما قبله — تقدّم بالترتيب أو اختر ما يناسبك</p>
+    </div>
+    <div class="path" id="path-grid"></div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap">
+    أكاديمية فقه المسلم — محتوى مُقدَّم بإذن من مشايخه، لخدمة طالب العلم
+  </div>
+</footer>
+
+<script src="js/effects.js"></script>
+<script src="js/data.js"></script>
+<script src="js/progress.js"></script>
+<script>
+  const grid = document.getElementById("path-grid");
+  const dropdown = document.getElementById("levels-dropdown");
+  SITE_DATA.levels.forEach((level) => {
+    const item = document.createElement("a");
+    item.href = `level.html?level=${level.id}`;
+    item.innerHTML = `<span>${level.name}</span><span class="ord">${level.arabicOrdinal}</span>`;
+    dropdown.appendChild(item);
+  });
+  document.addEventListener("click", (e) => {
+    const nav = document.getElementById("levels-nav-item");
+    if (!nav.contains(e.target)) nav.classList.remove("open");
+  });
+
+  const arabicDigits = { 1: "١", 2: "٢", 3: "٣", 4: "٤" };
+  SITE_DATA.levels.forEach((level) => {
+    const subjects = level.subjects || [];
+    const isReady = subjects.length > 0;
+    const card = document.createElement("a");
+    card.href = `level.html?level=${level.id}`;
+    card.className = "level-card" + (isReady ? "" : " not-ready");
+    card.innerHTML = `
+      <div class="level-card-top">
+        <span class="big-num">${arabicDigits[level.id]}</span>
+        <span class="station">
+          <svg viewBox="0 0 100 100" fill="none"><polygon points="50,5 61,39 97,39 68,60 79,95 50,74 21,95 32,60 3,39 39,39" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/></svg>
+        </span>
+      </div>
+      <span class="ordinal">المرتبة ${level.arabicOrdinal}</span>
+      <h3>${level.name.replace(/^المستوى (الأول|الثاني|الثالث|الرابع)( — )?/, "")}</h3>
+      <p>${level.subtitle}</p>
+      <div class="meta">
+        <span>${isReady ? subjects.length + " مواد" : "قريبًا"}</span>
+        <span class="${isReady ? "status-ready" : ""}">${isReady ? "المنهج متاح ←" : "—"}</span>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+
+  if (window.rescanReveal) window.rescanReveal();
+
+  // إحصائيات حية من بيانات الموقع الفعلية
+  const allSubjects = SITE_DATA.levels.flatMap((l) => l.subjects || []);
+  const readySubjects = allSubjects.filter((s) => (s.lessons || []).some((ls) => ls.youtubeId));
+  const totalLessons = allSubjects.reduce(
+    (sum, s) => sum + (s.lessons || []).filter((ls) => ls.youtubeId).length,
+    0
+  );
+  const subjectsEl = document.getElementById("stat-subjects");
+  const lessonsEl = document.getElementById("stat-lessons");
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        animateCount(subjectsEl, readySubjects.length);
+        animateCount(lessonsEl, totalLessons);
+        obs.disconnect();
+      }
+    });
+  });
+  obs.observe(document.querySelector(".stats-bar"));
+
+  // جسيمات ذهبية عائمة في الهيرو
+  const particlesEl = document.getElementById("particles");
+  for (let i = 0; i < 18; i++) {
+    const span = document.createElement("span");
+    span.style.right = Math.random() * 100 + "%";
+    span.style.bottom = "-10px";
+    span.style.animationDuration = 8 + Math.random() * 10 + "s";
+    span.style.animationDelay = Math.random() * 10 + "s";
+    particlesEl.appendChild(span);
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>المستوى — أكاديمية فقه المسلم</title>
+<meta name="theme-color" content="#0B1620" />
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a href="index.html" class="brand">
+      <span class="mark">ف</span>
+      <span class="brand-text"><span class="gold-shimmer">أكاديمية فقه المسلم</span><small>دروسٌ بإسنادٍ موثوق</small></span>
+    </a>
+    <nav class="main-nav">
+      <a href="index.html"><span class="full">الرئيسية</span></a>
+      <div class="nav-item" id="levels-nav-item">
+        <button type="button" onclick="document.getElementById('levels-nav-item').classList.toggle('open')">
+          <span class="full">المستويات</span>
+          <svg viewBox="0 0 12 8" fill="none"><path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="1.5"/></svg>
+        </button>
+        <div class="nav-dropdown" id="levels-dropdown"></div>
+      </div>
+      <a href="index.html#path"><span class="full">عن الأكاديمية</span></a>
+    </nav>
+  </div>
+</header>
+<div class="wrap" style="padding-top:16px;">
+  <nav class="crumbs">
+    <a href="index.html">الرئيسية</a>
+    <span>/</span>
+    <span id="crumb-level">المستوى</span>
+  </nav>
+</div>
+
+<section class="level-header">
+  <div class="wrap">
+    <span class="ordinal" id="level-ordinal"></span>
+    <h1 id="level-title"></h1>
+    <p id="level-subtitle"></p>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="lessons-grid" id="lessons-grid"></div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap">أكاديمية فقه المسلم — محتوى مُقدَّم بإذن من مشايخه، لخدمة طالب العلم</div>
+</footer>
+
+<script src="js/effects.js"></script>
+<script src="js/data.js"></script>
+<script src="js/progress.js"></script>
+<script>
+  const params = new URLSearchParams(location.search);
+  const levelId = params.get("level") || 1;
+  const level = getLevel(levelId);
+
+  const dropdown = document.getElementById("levels-dropdown");
+  SITE_DATA.levels.forEach((lv) => {
+    const item = document.createElement("a");
+    item.href = `level.html?level=${lv.id}`;
+    item.innerHTML = `<span>${lv.name}</span><span class="ord">${lv.arabicOrdinal}</span>`;
+    dropdown.appendChild(item);
+  });
+  document.addEventListener("click", (e) => {
+    const nav = document.getElementById("levels-nav-item");
+    if (!nav.contains(e.target)) nav.classList.remove("open");
+  });
+
+  if (!level) {
+    document.querySelector(".level-header .wrap").innerHTML = "<h1>المستوى غير موجود</h1>";
+  } else {
+    document.getElementById("crumb-level").textContent = level.name;
+    document.getElementById("level-ordinal").textContent = `المرتبة ${level.arabicOrdinal}`;
+    document.getElementById("level-title").textContent = level.name;
+    document.getElementById("level-subtitle").textContent = level.subtitle;
+    if (level.duration) {
+      document.getElementById("level-subtitle").insertAdjacentHTML(
+        "afterend",
+        `<div class="level-duration">${level.duration}</div>`
+      );
+    }
+    document.title = `${level.name} — أكاديمية فقه المسلم`;
+
+    const grid = document.getElementById("lessons-grid");
+    const subjects = level.subjects || [];
+
+    if (subjects.length === 0) {
+      grid.innerHTML = `
+        <div class="soon-panel">
+          <span class="mark">ف</span>
+          <h3>المنهج قيد الإعداد</h3>
+          <p>هنضيف مواد هذا المستوى بنفس تفصيل المستوى الأول قريبًا بإذن الله.</p>
+          <a href="level.html?level=1" class="btn btn-gold">تصفّح المستوى الأول</a>
+        </div>`;
+    } else {
+      subjects.forEach((subject) => {
+        const card = document.createElement("a");
+        card.href = `subject.html?id=${subject.id}`;
+        card.className = "subject-card reveal";
+        card.innerHTML = `
+          <div class="subject-top">
+            <span class="subject-icon">${subject.name.charAt(0)}</span>
+            <span class="topic-count">${subject.lessons.length} دروس</span>
+          </div>
+          <h3>${subject.name}</h3>
+          <div class="teacher-line">${subject.teacher}</div>
+          <p class="goal">${subject.goal}</p>
+        `;
+        grid.appendChild(card);
+      });
+    }
+  }
+  if (window.rescanReveal) window.rescanReveal();
+</script>
+
+</body>
+</html>

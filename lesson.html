@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>الدرس — أكاديمية فقه المسلم</title>
+<meta name="theme-color" content="#0B1620" />
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a href="index.html" class="brand">
+      <span class="mark">ف</span>
+      <span class="brand-text"><span class="gold-shimmer">أكاديمية فقه المسلم</span><small>دروسٌ بإسنادٍ موثوق</small></span>
+    </a>
+    <nav class="main-nav">
+      <a href="index.html"><span class="full">الرئيسية</span></a>
+      <div class="nav-item" id="levels-nav-item">
+        <button type="button" onclick="document.getElementById('levels-nav-item').classList.toggle('open')">
+          <span class="full">المستويات</span>
+          <svg viewBox="0 0 12 8" fill="none"><path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="1.5"/></svg>
+        </button>
+        <div class="nav-dropdown" id="levels-dropdown"></div>
+      </div>
+      <a href="index.html#path"><span class="full">عن الأكاديمية</span></a>
+    </nav>
+  </div>
+</header>
+<div class="wrap" style="padding-top:16px;">
+  <nav class="crumbs">
+    <a href="index.html">الرئيسية</a>
+    <span>/</span>
+    <a id="crumb-level" href="#"></a>
+  </nav>
+</div>
+
+<section class="lesson-page">
+  <div class="wrap">
+    <div class="player-wrap player-relative">
+      <div id="player"></div>
+      <div class="end-overlay" id="end-overlay">
+        <div class="eyebrow">انتهت الحلقة</div>
+        <h3 id="overlay-next-title">جارٍ التحضير...</h3>
+        <div class="next-name" id="overlay-next-sheikh"></div>
+        <div class="countdown-ring" id="countdown-ring">
+          <svg viewBox="0 0 64 64">
+            <circle class="track" cx="32" cy="32" r="28"></circle>
+            <circle class="fill" id="ring-fill" cx="32" cy="32" r="28"></circle>
+          </svg>
+          <div class="countdown-num" id="countdown-num">5</div>
+        </div>
+        <div class="end-actions">
+          <button class="btn btn-gold" id="btn-next-now">تشغيل الدرس التالي الآن</button>
+          <button class="btn btn-ghost" id="btn-cancel-auto">إلغاء والبقاء هنا</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="lesson-info">
+      <div>
+        <h1 id="lesson-title"></h1>
+        <div class="sheikh-line" id="lesson-sheikh"></div>
+        <p class="desc" id="lesson-desc"></p>
+      </div>
+
+      <aside class="up-next" id="up-next-panel">
+        <div class="label">الدرس التالي</div>
+        <div class="next-title" id="side-next-title"></div>
+        <div class="next-sheikh" id="side-next-sheikh"></div>
+        <a href="#" class="btn btn-gold" id="side-next-btn" style="width:100%">شاهد الدرس التالي</a>
+
+        <div class="other-lessons">
+          <div class="label">دروس أخرى في هذا المستوى</div>
+          <div id="other-lessons-list"></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap">أكاديمية فقه المسلم — محتوى مُقدَّم بإذن من مشايخه، لخدمة طالب العلم</div>
+</footer>
+
+<script src="js/effects.js"></script>
+<script src="js/data.js"></script>
+<script src="js/progress.js"></script>
+<script>
+  const params = new URLSearchParams(location.search);
+  const lessonId = params.get("id");
+  const found = getLesson(lessonId);
+
+  const dropdown = document.getElementById("levels-dropdown");
+  SITE_DATA.levels.forEach((lv) => {
+    const item = document.createElement("a");
+    item.href = `level.html?level=${lv.id}`;
+    item.innerHTML = `<span>${lv.name}</span><span class="ord">${lv.arabicOrdinal}</span>`;
+    dropdown.appendChild(item);
+  });
+  document.addEventListener("click", (e) => {
+    const nav = document.getElementById("levels-nav-item");
+    if (!nav.contains(e.target)) nav.classList.remove("open");
+  });
+
+  if (!found) {
+    document.querySelector(".lesson-page .wrap").innerHTML = "<h1>الدرس غير موجود</h1>";
+  } else {
+    const { lesson, level, subject } = found;
+    document.title = `${lesson.title} — أكاديمية فقه المسلم`;
+    document.getElementById("crumb-level").textContent = `${level.name} — ${subject.name}`;
+    document.getElementById("crumb-level").href = `subject.html?id=${subject.id}`;
+    document.getElementById("lesson-title").textContent = lesson.title;
+    document.getElementById("lesson-sheikh").textContent = `${subject.teacher} — ${subject.name}`;
+    document.getElementById("lesson-desc").textContent = subject.goal;
+
+    if (!lesson.youtubeId) {
+      document.querySelector(".player-wrap").innerHTML =
+        '<div style="padding:80px 24px;text-align:center;color:var(--paper-dim)">الفيديو هيُضاف قريبًا لهذا الدرس</div>';
+    }
+
+    // لوحة "الدرس التالي" الجانبية
+    const next = getAdjacentLesson(lesson.id, "next");
+    const upNextPanel = document.getElementById("up-next-panel");
+    if (next) {
+      document.getElementById("side-next-title").textContent = next.lesson.title;
+      document.getElementById("side-next-sheikh").textContent = subject.teacher;
+      document.getElementById("side-next-btn").href = `lesson.html?id=${next.lesson.id}`;
+    } else {
+      upNextPanel.innerHTML = `<div class="label">تهانينا</div><div class="next-title">أنهيت كل دروس هذه المادة 🎉</div>`;
+    }
+
+    // قائمة دروس المادة الحالية
+    const otherList = document.getElementById("other-lessons-list");
+    subject.lessons.forEach((l) => {
+      const row = document.createElement("a");
+      row.href = l.youtubeId ? `lesson.html?id=${l.id}` : "#";
+      row.className = "mini-lesson" + (isLessonDone(l.id) ? " done" : "");
+      row.innerHTML = `<span class="dot"></span><span>${l.title}</span>`;
+      if (l.id === lesson.id) row.style.color = "var(--gold-bright)";
+      otherList.appendChild(row);
+    });
+
+    // ====== مشغّل يوتيوب + منطق نهاية الحلقة ======
+    let ytPlayer;
+    let countdownTimer;
+
+    window.onYouTubeIframeAPIReady = function () {
+      if (!lesson.youtubeId) return;
+      ytPlayer = new YT.Player("player", {
+        videoId: lesson.youtubeId,
+        playerVars: { rel: 0 },
+        events: { onStateChange: onPlayerStateChange },
+      });
+    };
+
+    function onPlayerStateChange(e) {
+      if (e.data === YT.PlayerState.ENDED) {
+        markLessonDone(lesson.id);
+        showEndOverlay();
+      }
+    }
+
+    function showEndOverlay() {
+      const overlay = document.getElementById("end-overlay");
+      const nextTitleEl = document.getElementById("overlay-next-title");
+      const nextSheikhEl = document.getElementById("overlay-next-sheikh");
+      const nextBtn = document.getElementById("btn-next-now");
+
+      if (next) {
+        nextTitleEl.textContent = `الدرس التالي: ${next.lesson.title}`;
+        nextSheikhEl.textContent = subject.teacher;
+        nextBtn.onclick = () => (location.href = `lesson.html?id=${next.lesson.id}`);
+        startCountdown(() => (location.href = `lesson.html?id=${next.lesson.id}`));
+      } else {
+        nextTitleEl.textContent = "أتممت هذا المستوى بأكمله 🎉";
+        nextSheikhEl.textContent = "";
+        nextBtn.textContent = "العودة للمستويات";
+        nextBtn.onclick = () => (location.href = "index.html");
+      }
+      overlay.classList.add("show");
+    }
+
+    function startCountdown(onComplete) {
+      const RADIUS = 28;
+      const CIRC = 2 * Math.PI * RADIUS;
+      const ring = document.getElementById("ring-fill");
+      ring.style.strokeDasharray = CIRC;
+      ring.style.strokeDashoffset = 0;
+      let secondsLeft = 5;
+      const numEl = document.getElementById("countdown-num");
+      numEl.textContent = secondsLeft;
+
+      countdownTimer = setInterval(() => {
+        secondsLeft -= 1;
+        numEl.textContent = Math.max(secondsLeft, 0);
+        ring.style.strokeDashoffset = CIRC * (1 - secondsLeft / 5);
+        if (secondsLeft <= 0) {
+          clearInterval(countdownTimer);
+          onComplete();
+        }
+      }, 1000);
+    }
+
+    document.getElementById("btn-cancel-auto").addEventListener("click", () => {
+      clearInterval(countdownTimer);
+      document.getElementById("end-overlay").classList.remove("show");
+    });
+
+    if (lesson.youtubeId) {
+      const tag = document.createElement("script");
+      tag.src = "https://www.youtube.com/iframe_api";
+      document.body.appendChild(tag);
+    }
+  }
+</script>
+
+</body>
+</html>
